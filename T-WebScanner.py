@@ -8,7 +8,10 @@ OS = platform.system()
 PythonVersion = platform.python_version()
 
 def banner():
-	print(Fore.YELLOW + """
+	import platform
+	from colorama import init, Fore, Back, Style
+	init(autoreset=True)
+	print(Fore.YELLOW + '''
 =========================================================================
 =========================================================================
           _______                      _____  _                 
@@ -25,7 +28,10 @@ def banner():
 
 =========================================================================
 =========================================================================
-""")
+''')
+	print(Fore.GREEN + ' [+] Operating System: ' + platform.system() + ' ' + platform.release() + ' (Version: ' + platform.version() + ')' if platform.system() in ['Windows', 'Linux'] else Fore.RED + ' [-] Operating System: macOS ' + platform.release() + ' (Version: ' + platform.version() + ')')
+	print(Fore.GREEN + ' [+] Python Version: ' + platform.python_version() if platform.python_version()[0] == '3' else Fore.RED + ' [-] Python Version: ' + platform.python_version())
+	print('')
 
 def main():
 	pass
@@ -33,9 +39,7 @@ def main():
 
 if __name__ == '__main__':
 	banner()
-	print(Fore.GREEN + '[+] Your OS: ' + OS if OS in ['Windows', 'Linux'] else Fore.RED + '[-] Your OS: ' + OS)
-	print(Fore.GREEN + '[+] Python Version: ' + PythonVersion if PythonVersion[0] == '3' else Fore.RED + '[-] Python Version: ' + PythonVersion)
 	if OS in ['Windows', 'Linux'] and PythonVersion[0] == '3':
 		main()
 	else:
-		pass
+		exit("")
