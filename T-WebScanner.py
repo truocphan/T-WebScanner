@@ -42,4 +42,4 @@ if __name__ == '__main__':
 	if OS in ['Windows', 'Linux'] and PythonVersion[0] == '3':
 		main()
 	else:
-		exit(" Please use " + BACK.RED + "python 3.x.x" + Style.RESET_ALL + " to run T-WebScanner and run on " + BACK.RED + "Window" + Style.RESET_ALL + " or " + BACK.RED + "Linux" + Style.RESET_ALL)
+		exit(" Please use " + Back.RED + "python 3.x.x" + Style.RESET_ALL + " to run T-WebScanner and run on " + Back.RED + "Window" + Style.RESET_ALL + " or " + Back.RED + "Linux" + Style.RESET_ALL)
